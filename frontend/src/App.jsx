@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Header } from './components/Header';
+import { VeredasLandingPage } from './components/VeredasLandingPage';
 import { ChatInterface } from './components/ChatInterface';
 import { MapSelector } from './components/MapSelector';
 import { CaseInputForm } from './components/clinical/CaseInputForm';
@@ -19,12 +20,12 @@ import {
   FileText, 
   MessageSquareCode, 
   CheckCircle2, 
-  Cpu, 
   Sparkles,
-  MapPin
+  ArrowLeft
 } from 'lucide-react';
 
 export function App() {
+  const [currentView, setCurrentView] = useState('landing'); // 'landing' | 'app'
   const [activeTab, setActiveTab] = useState('clinical'); // 'clinical' | 'probability' | 'differential' | 'report' | 'chat'
   const [isMapOpen, setIsMapOpen] = useState(false);
   const [sampleCases, setSampleCases] = useState([]);
@@ -39,14 +40,15 @@ export function App() {
   const { locations, selectedLocation, setSelectedLocation } = useLocationState();
   const { messages, isLoading: isChatLoading, currentAgent, send, clearChat } = useChat(selectedLocation);
 
-  // Carrega casos modelo e executa análise inicial
+  // Carrega casos modelo e executa análise inicial em background
   useEffect(() => {
     fetchSampleCases()
       .then(cases => {
         if (cases && cases.length > 0) {
           setSampleCases(cases);
-          // Executa orquestração inicial com o Caso 1
-          handleAnalyzeCase(cases[0].data);
+          orchestrateCase(cases[0].data)
+            .then(res => setOrchestratedResult(res))
+            .catch(err => console.error(err));
         }
       })
       .catch(err => console.error('Erro ao carregar casos:', err));
@@ -57,8 +59,7 @@ export function App() {
     try {
       const result = await orchestrateCase(caseData);
       setOrchestratedResult(result);
-      // Se estiver na tela de formulário, redireciona suavemente para os resultados
-      if (activeTab === 'clinical' && orchestratedResult) {
+      if (activeTab === 'clinical') {
         setActiveTab('probability');
       }
     } catch (err) {
@@ -73,8 +74,14 @@ export function App() {
     setIsExplanationOpen(true);
   };
 
+  // Se estiver na tela inicial Veredas
+  if (currentView === 'landing') {
+    return <VeredasLandingPage onLaunchApp={() => setCurrentView('app')} />;
+  }
+
+  // Se estiver na Plataforma de IA Clínica / Front-End
   return (
-    <div className="flex flex-col h-screen w-screen overflow-hidden bg-slate-950 text-slate-100">
+    <div className="flex flex-col h-screen w-screen overflow-hidden bg-[#1c1712] text-[#e6d5c3]">
       
       {/* Header Superior Integrado */}
       <Header
@@ -82,10 +89,11 @@ export function App() {
         selectedLocation={selectedLocation}
         onToggleMap={() => setIsMapOpen(prev => !prev)}
         isMapOpen={isMapOpen}
+        onGoHome={() => setCurrentView('landing')}
       />
 
-      {/* Barra de Navegação das Telas MedIA (Design System) */}
-      <nav className="glass-panel border-b border-slate-800/80 px-4 py-2 z-30">
+      {/* Barra de Navegação das Telas MedIA (Design System Veredas) */}
+      <nav className="glass-panel border-b border-[#3b2d22] px-4 py-2.5 z-30 bg-[#1c1712]/95 backdrop-blur-md">
         <div className="max-w-7xl mx-auto flex items-center justify-between overflow-x-auto no-scrollbar gap-2">
           
           <div className="flex items-center gap-1.5 shrink-0">
@@ -93,11 +101,11 @@ export function App() {
               onClick={() => setActiveTab('clinical')}
               className={`flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all ${
                 activeTab === 'clinical'
-                  ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/50 shadow-sm'
-                  : 'text-slate-400 hover:text-white hover:bg-slate-900'
+                  ? 'bg-[#c25a30]/30 text-[#f2e5d0] border border-[#d17a42] shadow-sm'
+                  : 'text-[#a69685] hover:text-[#f2e5d0] hover:bg-[#2a2018]'
               }`}
             >
-              <Stethoscope className="w-4 h-4 text-cyan-400" />
+              <Stethoscope className="w-4 h-4 text-[#d17a42]" />
               <span>Consulta Clínica</span>
             </button>
 
@@ -105,11 +113,11 @@ export function App() {
               onClick={() => setActiveTab('probability')}
               className={`flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all relative ${
                 activeTab === 'probability'
-                  ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/50 shadow-sm'
-                  : 'text-slate-400 hover:text-white hover:bg-slate-900'
+                  ? 'bg-[#c25a30]/30 text-[#f2e5d0] border border-[#d17a42] shadow-sm'
+                  : 'text-[#a69685] hover:text-[#f2e5d0] hover:bg-[#2a2018]'
               }`}
             >
-              <Activity className="w-4 h-4 text-emerald-400" />
+              <Activity className="w-4 h-4 text-[#d17a42]" />
               <span>Probabilidade & Alertas</span>
               {orchestratedResult?.safety?.severity === 'critical' && (
                 <span className="w-2 h-2 rounded-full bg-rose-500 animate-ping absolute top-1 right-1" />
@@ -120,11 +128,11 @@ export function App() {
               onClick={() => setActiveTab('differential')}
               className={`flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all ${
                 activeTab === 'differential'
-                  ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/50 shadow-sm'
-                  : 'text-slate-400 hover:text-white hover:bg-slate-900'
+                  ? 'bg-[#c25a30]/30 text-[#f2e5d0] border border-[#d17a42] shadow-sm'
+                  : 'text-[#a69685] hover:text-[#f2e5d0] hover:bg-[#2a2018]'
               }`}
             >
-              <GitBranch className="w-4 h-4 text-amber-400" />
+              <GitBranch className="w-4 h-4 text-[#d17a42]" />
               <span>Diagnóstico Diferencial & Exames</span>
             </button>
 
@@ -132,11 +140,11 @@ export function App() {
               onClick={() => setActiveTab('report')}
               className={`flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all ${
                 activeTab === 'report'
-                  ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/50 shadow-sm'
-                  : 'text-slate-400 hover:text-white hover:bg-slate-900'
+                  ? 'bg-[#c25a30]/30 text-[#f2e5d0] border border-[#d17a42] shadow-sm'
+                  : 'text-[#a69685] hover:text-[#f2e5d0] hover:bg-[#2a2018]'
               }`}
             >
-              <FileText className="w-4 h-4 text-violet-400" />
+              <FileText className="w-4 h-4 text-[#d17a42]" />
               <span>Relatório Médico</span>
             </button>
           </div>
@@ -147,11 +155,11 @@ export function App() {
               onClick={() => setActiveTab('chat')}
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition ${
                 activeTab === 'chat'
-                  ? 'bg-gradient-to-r from-cyan-600 to-blue-600 text-white shadow-md'
-                  : 'bg-slate-900/90 text-slate-300 hover:text-white border border-slate-700'
+                  ? 'bg-[#c25a30] text-white shadow-md'
+                  : 'bg-[#2a2018] text-[#d6c5b3] hover:text-white border border-[#3b2d22]'
               }`}
             >
-              <MessageSquareCode className="w-3.5 h-3.5 text-cyan-400" />
+              <MessageSquareCode className="w-3.5 h-3.5 text-[#d17a42]" />
               <span>Chat de Engenharia (IA Front-End)</span>
             </button>
           </div>
@@ -174,25 +182,25 @@ export function App() {
               />
 
               {orchestratedResult && (
-                <div className="glass-panel rounded-2xl p-5 border border-slate-800">
+                <div className="glass-panel rounded-2xl p-5 border border-[#3b2d22]">
                   <div className="flex items-center justify-between mb-2">
-                    <h3 className="text-xs uppercase tracking-wider font-bold text-cyan-400 flex items-center gap-1.5">
+                    <h3 className="text-xs uppercase tracking-wider font-bold text-[#d17a42] flex items-center gap-1.5">
                       <CheckCircle2 className="w-4 h-4 text-emerald-400" />
                       Síntese Estruturada do Agente Clínico
                     </h3>
                     <button
                       onClick={() => setActiveTab('probability')}
-                      className="text-xs text-cyan-400 hover:underline font-semibold"
+                      className="text-xs text-[#d17a42] hover:underline font-semibold"
                     >
                       Ver Análise de Probabilidades →
                     </button>
                   </div>
-                  <p className="text-xs text-slate-200 leading-relaxed mb-3">
+                  <p className="text-xs text-[#e6d5c3] leading-relaxed mb-3">
                     {orchestratedResult.clinical?.summary}
                   </p>
                   <div className="flex flex-wrap gap-2">
                     {orchestratedResult.clinical?.clinical_problems?.map((prob, i) => (
-                      <span key={i} className="text-[11px] font-mono px-2.5 py-1 rounded-lg bg-slate-900 border border-slate-700 text-cyan-300">
+                      <span key={i} className="text-[11px] font-mono px-2.5 py-1 rounded-lg bg-[#2a2018] border border-[#3b2d22] text-[#d17a42]">
                         {prob}
                       </span>
                     ))}
@@ -214,17 +222,17 @@ export function App() {
               <div>
                 <div className="flex items-center justify-between mb-4">
                   <div>
-                    <h2 className="text-base font-bold text-white flex items-center gap-2">
-                      <Activity className="w-5 h-5 text-cyan-400" />
+                    <h2 className="text-base font-bold text-[#f2e5d0] flex items-center gap-2">
+                      <Activity className="w-5 h-5 text-[#d17a42]" />
                       Estimativa de Probabilidade Clínica (Agente de Probabilidade)
                     </h2>
-                    <p className="text-xs text-slate-400">
+                    <p className="text-xs text-[#a69685]">
                       Compatibilidade qualitativa fundamentada em achados objetivos e correlações clínicas
                     </p>
                   </div>
                   <button
                     onClick={() => setActiveTab('clinical')}
-                    className="text-xs text-slate-400 hover:text-white underline"
+                    className="text-xs text-[#a69685] hover:text-white underline"
                   >
                     Alterar dados do caso
                   </button>
@@ -262,7 +270,7 @@ export function App() {
               {orchestratedResult?.report ? (
                 <ClinicalReportView report={orchestratedResult.report} />
               ) : (
-                <div className="glass-panel p-8 text-center text-slate-400 rounded-2xl">
+                <div className="glass-panel p-8 text-center text-[#a69685] rounded-2xl">
                   Nenhum caso analisado ainda. Volte para a aba "Consulta Clínica" para iniciar.
                 </div>
               )}
@@ -271,7 +279,7 @@ export function App() {
 
           {/* TAB 5: CHAT DE ENGENHARIA / FRONTEND */}
           {activeTab === 'chat' && (
-            <div className="h-[calc(100vh-140px)] rounded-2xl overflow-hidden glass-panel border border-slate-800 shadow-2xl flex flex-col animate-fade-in">
+            <div className="h-[calc(100vh-140px)] rounded-2xl overflow-hidden glass-panel border border-[#3b2d22] shadow-2xl flex flex-col animate-fade-in">
               <ChatInterface
                 messages={messages}
                 isLoading={isChatLoading}

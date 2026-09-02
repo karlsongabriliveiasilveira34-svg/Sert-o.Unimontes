@@ -1,27 +1,37 @@
 import React from 'react';
-import { Sparkles, MapPin, Radio, Layers } from 'lucide-react';
+import { Sparkles, MapPin, Radio, Layers, Home, ArrowLeft } from 'lucide-react';
 
-export function Header({ currentAgent, selectedLocation, onToggleMap, isMapOpen }) {
+export function Header({ currentAgent, selectedLocation, onToggleMap, isMapOpen, onGoHome }) {
   return (
-    <header className="sticky top-0 z-40 w-full glass-panel border-b border-cyan-500/20 px-4 py-3">
+    <header className="sticky top-0 z-40 w-full glass-panel border-b border-[#d17a42]/30 px-4 py-3 bg-[#1c1712]/90 backdrop-blur-md">
       <div className="max-w-7xl mx-auto flex items-center justify-between">
         
         {/* Logo & Marca */}
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-500 to-violet-600 flex items-center justify-center shadow-lg shadow-cyan-500/20 text-white font-bold text-xl">
+          {onGoHome && (
+            <button
+              onClick={onGoHome}
+              className="p-2 rounded-xl bg-[#2a2018] hover:bg-[#3b2d22] border border-[#d17a42]/30 text-[#d6c5b3] hover:text-white transition shadow-sm"
+              title="Voltar para a página inicial Veredas"
+            >
+              <ArrowLeft className="w-4 h-4 text-[#d17a42]" />
+            </button>
+          )}
+
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-[#c25a30] to-[#d17a42] flex items-center justify-center shadow-lg shadow-[#c25a30]/25 text-white font-bold text-xl">
             ⚡
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h1 className="text-base font-bold tracking-tight text-white">
-                Sertão<span className="text-cyan-400">.Unimontes</span>
+              <h1 className="text-base font-bold tracking-tight text-[#f2e5d0]">
+                Veredas<span className="text-[#d17a42]">.Unimontes</span>
               </h1>
-              <span className="text-[10px] uppercase font-semibold tracking-wider px-2 py-0.5 rounded-full bg-cyan-950/80 text-cyan-300 border border-cyan-500/30">
-                Front-End AI RAG
+              <span className="text-[10px] uppercase font-semibold tracking-wider px-2 py-0.5 rounded-full bg-[#3b2d22] text-[#e6d5c3] border border-[#d17a42]/40 font-mono">
+                MedIA Multiagente
               </span>
             </div>
-            <p className="text-xs text-slate-400">
-              Rede de Agentes Especialistas com Roteamento Semântico
+            <p className="text-xs text-[#a69685]">
+              Inteligência que nasce do território • Cerrado & Sertão
             </p>
           </div>
         </div>
@@ -33,12 +43,12 @@ export function Header({ currentAgent, selectedLocation, onToggleMap, isMapOpen 
             onClick={onToggleMap}
             className={`flex items-center gap-2 px-3 py-1.5 rounded-xl border text-xs font-medium transition-all ${
               isMapOpen
-                ? 'bg-cyan-500/20 border-cyan-400 text-cyan-200 shadow-sm shadow-cyan-500/30'
-                : 'bg-slate-900/80 border-slate-700/80 text-slate-300 hover:border-slate-500 hover:text-white'
+                ? 'bg-[#c25a30]/30 border-[#d17a42] text-[#f2e5d0] shadow-sm'
+                : 'bg-[#2a2018]/80 border-[#3b2d22] text-[#d6c5b3] hover:border-[#d17a42]/60 hover:text-white'
             }`}
             title="Alternar visão do mapa geográfico"
           >
-            <MapPin className="w-3.5 h-3.5 text-cyan-400 animate-bounce" />
+            <MapPin className="w-3.5 h-3.5 text-[#d17a42] animate-bounce" />
             <span className="hidden sm:inline font-mono text-[11px]">
               {selectedLocation?.city?.split(' ')[0] || 'Unimontes'} ({selectedLocation?.state || 'MG'})
             </span>
@@ -47,24 +57,10 @@ export function Header({ currentAgent, selectedLocation, onToggleMap, isMapOpen 
             </span>
           </button>
 
-          {/* Agente Ativo Atual */}
-          <div className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-900/90 border border-slate-700/80 text-xs">
-            <span className="text-base">{currentAgent.avatar || '🤖'}</span>
-            <div className="flex flex-col text-left">
-              <span className="text-[10px] text-slate-400 uppercase tracking-wider font-semibold">
-                Agente Ativo
-              </span>
-              <span className="text-xs font-semibold text-slate-200">
-                {currentAgent.title?.split(' ')[0] || 'React'}
-              </span>
-            </div>
-            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping ml-1" />
-          </div>
-
           {/* Botão de abrir/fechar painel do Mapa */}
           <button
             onClick={onToggleMap}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-semibold transition shadow-md shadow-cyan-600/30"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#c25a30] hover:bg-[#a14823] text-white text-xs font-semibold transition shadow-md shadow-[#c25a30]/25"
           >
             <Layers className="w-3.5 h-3.5" />
             <span className="hidden sm:inline">{isMapOpen ? 'Ocultar Mapa' : 'Ver Polos / Mapa'}</span>

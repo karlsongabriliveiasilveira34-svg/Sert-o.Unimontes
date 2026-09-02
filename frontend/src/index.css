@@ -2,19 +2,92 @@
 @tailwind components;
 @tailwind utilities;
 
+/* KEEP_IN_SYNC(fullscreen/resources/figmake/shadcn/globals.css) */
+
 :root {
-  color-scheme: dark;
+  --font-size: 16px;
+  --background: #ffffff;
+  --foreground: oklch(0.145 0 0);
+  --card: #ffffff;
+  --card-foreground: oklch(0.145 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.145 0 0);
+  --primary: #030213;
+  --primary-foreground: oklch(1 0 0);
+  --secondary: oklch(0.95 0.0058 264.53);
+  --secondary-foreground: #030213;
+  --muted: #ececf0;
+  --muted-foreground: #717182;
+  --accent: #e9ebef;
+  --accent-foreground: #030213;
+  --destructive: #d4183d;
+  --destructive-foreground: #ffffff;
+  --border: rgba(0, 0, 0, 0.1);
+  --input: transparent;
+  --input-background: #f3f3f5;
+  --switch-background: #cbced4;
+  --font-weight-medium: 500;
+  --font-weight-normal: 400;
+  --ring: oklch(0.708 0 0);
+  --chart-1: oklch(0.646 0.222 41.116);
+  --chart-2: oklch(0.6 0.118 184.704);
+  --chart-3: oklch(0.398 0.07 227.392);
+  --chart-4: oklch(0.828 0.189 84.429);
+  --chart-5: oklch(0.769 0.188 70.08);
+  --radius: 0.625rem;
+  --sidebar: oklch(0.985 0 0);
+  --sidebar-foreground: oklch(0.145 0 0);
+  --sidebar-primary: #030213;
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.97 0 0);
+  --sidebar-accent-foreground: oklch(0.205 0 0);
+  --sidebar-border: oklch(0.922 0 0);
+  --sidebar-ring: oklch(0.708 0 0);
+}
+
+.dark {
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.145 0 0);
+  --card-foreground: oklch(0.985 0 0);
+  --popover: oklch(0.145 0 0);
+  --popover-foreground: oklch(0.985 0 0);
+  --primary: oklch(0.985 0 0);
+  --primary-foreground: oklch(0.205 0 0);
+  --secondary: oklch(0.269 0 0);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.269 0 0);
+  --muted-foreground: oklch(0.708 0 0);
+  --accent: oklch(0.269 0 0);
+  --accent-foreground: oklch(0.985 0 0);
+  --destructive: oklch(0.396 0.141 25.723);
+  --destructive-foreground: oklch(0.637 0.237 25.331);
+  --border: oklch(0.269 0 0);
+  --input: oklch(0.269 0 0);
+  --ring: oklch(0.439 0 0);
+  --font-weight-medium: 500;
+  --font-weight-normal: 400;
+  --chart-1: oklch(0.488 0.243 264.376);
+  --chart-2: oklch(0.696 0.17 162.48);
+  --chart-3: oklch(0.769 0.188 70.08);
+  --chart-4: oklch(0.627 0.265 303.9);
+  --chart-5: oklch(0.645 0.246 16.439);
+  --sidebar: oklch(0.205 0 0);
+  --sidebar-foreground: oklch(0.985 0 0);
+  --sidebar-primary: oklch(0.488 0.243 264.376);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.269 0 0);
+  --sidebar-accent-foreground: oklch(0.985 0 0);
+  --sidebar-border: oklch(0.269 0 0);
+  --sidebar-ring: oklch(0.439 0 0);
 }
 
 body {
   margin: 0;
-  background-color: #030712;
-  color: #f8fafc;
-  background-image: 
-    radial-gradient(at 0% 0%, rgba(6, 182, 212, 0.12) 0px, transparent 50%),
-    radial-gradient(at 100% 100%, rgba(139, 92, 246, 0.1) 0px, transparent 50%),
-    radial-gradient(at 50% 50%, rgba(15, 23, 42, 0.6) 0px, transparent 100%);
-  background-attachment: fixed;
+  background-color: #1c1712;
+  color: #e6d5c3;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  overflow-x: hidden;
 }
 
 /* Custom Scrollbar */
@@ -23,71 +96,56 @@ body {
   height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: rgba(15, 23, 42, 0.6);
+  background: #1c1712;
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(56, 189, 248, 0.3);
+  background: #d17a42;
   border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(56, 189, 248, 0.6);
+  background: #c25a30;
 }
 
-/* Glassmorphism Styles */
+/* Glassmorphism & Terracotta Styles */
 .glass-panel {
-  background: rgba(15, 23, 42, 0.75);
+  background: rgba(28, 23, 18, 0.85);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(209, 122, 66, 0.2);
 }
 
 .glass-panel-glow {
-  background: rgba(15, 23, 42, 0.85);
+  background: rgba(28, 23, 18, 0.9);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(6, 182, 212, 0.25);
-  box-shadow: 0 0 25px -5px rgba(6, 182, 212, 0.15);
+  border: 1px solid rgba(209, 122, 66, 0.35);
+  box-shadow: 0 0 25px -5px rgba(194, 90, 48, 0.2);
 }
 
 /* Leaflet Dark Mode Customization */
 .leaflet-container {
-  background: #090d16 !important;
+  background: #1c1712 !important;
   font-family: inherit;
   border-radius: 1rem;
 }
 
 .leaflet-tile {
-  filter: brightness(0.6) invert(1) contrast(3) hue-rotate(200deg) saturate(0.3) brightness(0.7);
+  filter: brightness(0.65) invert(1) contrast(2.5) hue-rotate(330deg) saturate(0.5) brightness(0.75);
 }
 
 .leaflet-popup-content-wrapper {
-  background: #0f172a !important;
-  color: #f8fafc !important;
-  border: 1px solid rgba(56, 189, 248, 0.3) !important;
+  background: #2a2018 !important;
+  color: #f2e5d0 !important;
+  border: 1px solid rgba(209, 122, 66, 0.4) !important;
   border-radius: 0.75rem !important;
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.6) !important;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.8) !important;
 }
 
 .leaflet-popup-tip {
-  background: #0f172a !important;
+  background: #2a2018 !important;
 }
 
 /* Pulse animation for map hubs */
-.map-pulse-marker {
-  position: relative;
-}
-.map-pulse-marker::after {
-  content: '';
-  position: absolute;
-  top: -6px;
-  left: -6px;
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  background: rgba(6, 182, 212, 0.5);
-  animation: markerPing 2s cubic-bezier(0, 0, 0.2, 1) infinite;
-}
-
 @keyframes markerPing {
   75%, 100% {
     transform: scale(2.2);
