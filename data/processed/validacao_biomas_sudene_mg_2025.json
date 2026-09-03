@@ -1,0 +1,18 @@
+{
+  "fonte": "IBGE - Biomas e Sistema Costeiro-Marinho do Brasil, escala 1:250.000, versão 2025",
+  "arquivo_fonte": "data\\raw\\IBGE_Biomas_SistemaCosteiro_2025.zip",
+  "arquivo_fonte_sha256": "247B15C427070805044EBE02012F15552850D535FBFECADDB359875CDDA1EA8F",
+  "campos_fonte": {
+    "codigo": "CD_BIOMA",
+    "caatinga": "2",
+    "cerrado": "3"
+  },
+  "municipios_processados": 249,
+  "municipios_com_cerrado": 112,
+  "municipios_com_caatinga": 40,
+  "municipios_com_ambos": 30,
+  "metodo_area": "interseção GEOS em WGS84 e área em projeção global equivalente EPSG:6933, km2",
+  "nota_transicao": "A fonte não possui classe de transição; esta etapa não infere ecótono.",
+  "arquivo_saida_sha256": "CCE8A42DF647844A89910EB7AD6F7E2C38E71922BC74750F5B1FDADAAC74D391",
+  "status": "aprovado"
+}

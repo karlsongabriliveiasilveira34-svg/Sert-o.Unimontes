@@ -55,3 +55,10 @@ A pipeline será parametrizada antes da Etapa 5 para receber qualquer seleção
 válida de 25 municípios do recorte, mantendo a amostra atual como referência.
 A decisão e o plano de adaptação estão em
 [docs/geospatial-pipeline/00-decisao-amostra-parametrizavel.md](docs/geospatial-pipeline/00-decisao-amostra-parametrizavel.md).
+
+### Etapa 5 — Interseção com biomas IBGE
+
+As áreas e percentuais de Cerrado e Caatinga foram calculados para os 249
+municípios do universo, permitindo atender seleções futuras sem repetir o
+cruzamento espacial. Fonte, método, validações e limites estão em
+[docs/geospatial-pipeline/05-intersecao-biomas-ibge.md](docs/geospatial-pipeline/05-intersecao-biomas-ibge.md).
