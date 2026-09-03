@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { VeredasSymbol } from './VeredasSymbol';
+import { VeredasMultimodalForm } from './VeredasMultimodalForm';
 import { 
   ArrowLeft, 
   Mic, 
@@ -14,7 +15,10 @@ import {
   Sparkles,
   Layers,
   X,
-  Compass
+  Compass,
+  Sliders,
+  Activity,
+  Satellite
 } from 'lucide-react';
 
 export function VeredasImmersiveChat({ onGoHome }) {
@@ -23,6 +27,7 @@ export function VeredasImmersiveChat({ onGoHome }) {
   const [isThinking, setIsThinking] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
   const [attachedFiles, setAttachedFiles] = useState([]);
+  const [showMultimodalForm, setShowMultimodalForm] = useState(false);
   const messagesEndRef = useRef(null);
   const textareaRef = useRef(null);
   const fileInputRef = useRef(null);
@@ -266,6 +271,19 @@ export function VeredasImmersiveChat({ onGoHome }) {
           </button>
 
           <div className="flex items-center gap-3">
+            <button
+              onClick={() => setShowMultimodalForm(prev => !prev)}
+              className={`flex items-center gap-2 text-xs font-mono px-3 py-1.5 rounded-lg border transition-all cursor-pointer ${
+                showMultimodalForm 
+                  ? 'bg-[#c4602c]/20 border-[#c4602c] text-[#f7ebd9]'
+                  : 'bg-[#140f0a] border-[#2d2218] text-[#a89279] hover:text-[#f7ebd9]'
+              }`}
+              title="Abrir Formulário de Diagnóstico Multimodal e Plano de Manejo"
+            >
+              <Activity className="w-3.5 h-3.5 text-[#c4602c]" />
+              <span className="hidden sm:inline">Diagnóstico Multimodal</span>
+            </button>
+
             {messages.length > 0 && (
               <button
                 onClick={() => setMessages([])}
@@ -284,11 +302,22 @@ export function VeredasImmersiveChat({ onGoHome }) {
       {/* 2. Canvas Centrado (Estilo Editorial e Cinematográfico, Sem Sidebar) */}
       <main className="flex-1 w-full max-w-4xl mx-auto px-6 sm:px-8 py-8 flex flex-col justify-start">
         
+        {/* Painel do Formulário Multimodal quando ativo */}
+        {showMultimodalForm && (
+          <VeredasMultimodalForm 
+            onSubmitDiagnosis={(query) => {
+              setShowMultimodalForm(false);
+              handleSendMessage(query);
+            }}
+            onClose={() => setShowMultimodalForm(false)}
+          />
+        )}
+
         {/* ESTADO DE BOAS-VINDAS */}
         {messages.length === 0 ? (
-          <div className="flex-1 flex flex-col items-center justify-center text-center py-12 sm:py-20 animate-fade-in max-w-2xl mx-auto">
+          <div className="flex-1 flex flex-col items-center justify-center text-center py-12 sm:py-16 animate-fade-in max-w-2xl mx-auto">
             
-            <div className="mb-8">
+            <div className="mb-6">
               <VeredasSymbol size="2xl" isPulsing={true} showAura={true} />
             </div>
 
@@ -299,6 +328,16 @@ export function VeredasImmersiveChat({ onGoHome }) {
             <p className="text-base sm:text-lg text-[#a89279] leading-relaxed max-w-xl font-normal">
               Inteligência territorial para investigar a flora, a fauna e a morfologia adaptativa do Cerrado e do Sertão brasileiro.
             </p>
+
+            {!showMultimodalForm && (
+              <button
+                onClick={() => setShowMultimodalForm(true)}
+                className="mt-6 inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#1a140e] border border-[#c4602c]/50 text-xs font-mono text-[#e4ceaa] hover:text-[#f7ebd9] hover:border-[#c4602c] hover:bg-[#241a12] transition-all cursor-pointer shadow-lg"
+              >
+                <Satellite className="w-4 h-4 text-[#c4602c]" />
+                <span>Preencher Diagnóstico Multimodal (Sentinel-2 / Campo)</span>
+              </button>
+            )}
           </div>
         ) : (
           /* MENSAGENS EM FORMATO DE BLOCOS EDITORIAIS */
@@ -506,6 +545,21 @@ export function VeredasImmersiveChat({ onGoHome }) {
               multiple 
               accept="image/*,.pdf"
             />
+
+            {/* Ícone: Diagnóstico Multimodal */}
+            <button
+              type="button"
+              onClick={() => setShowMultimodalForm(prev => !prev)}
+              className={`p-3 rounded-xl transition-all cursor-pointer ${
+                showMultimodalForm 
+                  ? 'bg-[#c4602c]/20 text-[#c4602c] border border-[#c4602c]/50'
+                  : 'text-[#a89279] hover:text-[#f7ebd9] hover:bg-[#1f1812]'
+              }`}
+              title="Abrir Formulário de Diagnóstico Multimodal (Sentinel-2 / Campo)"
+              aria-label="Abrir Diagnóstico Multimodal"
+            >
+              <Sliders className="w-5 h-5" />
+            </button>
 
             {/* Ícone: Anexo de imagem ou amostra foliar */}
             <button
