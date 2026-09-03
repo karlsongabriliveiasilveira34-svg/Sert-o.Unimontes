@@ -1,0 +1,19 @@
+{
+  "fonte_universo": "IBGE - Area de Atuacao da SUDENE, 2021 (LC 185/2021)",
+  "fonte_geometria": "IBGE - Malha Municipal Digital 2021, Minas Gerais",
+  "metodo": "medoide geodesico seguido de amostragem espacial maximin",
+  "unidade_distancia": "km, distancia de grande circulo entre centroides municipais",
+  "universo_esperado": 249,
+  "municipios_candidatos": 249,
+  "municipios_amostra": 25,
+  "codigos_duplicados_amostra": [],
+  "codigos_fora_do_universo": [],
+  "municipio_semente": {
+    "codigo_ibge": "3141801",
+    "municipio": "Minas Novas"
+  },
+  "cobertura_maxima_distancia_ao_ponto_amostral_mais_proximo_km": 88.408,
+  "distancia_minima_entre_pares_da_amostra_km": 89.678,
+  "arquivo_amostra_sha256": "7599BC38233BC7D4E431CFF63CA6F2F8DE8F64C57BE6B718F6432822D9B8B8BE",
+  "status": "aprovado"
+}

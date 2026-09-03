@@ -43,3 +43,10 @@ Os limites municipais foram dissolvidos em uma geometria válida, pronta para
 interseções com bases de biomas. A decisão, os indicadores de validação e os
 limites metodológicos estão em
 [docs/geospatial-pipeline/03-consolidacao-area.md](docs/geospatial-pipeline/03-consolidacao-area.md).
+
+### Etapa 4 — Seleção da amostra de 25 municípios
+
+Os 25 municípios foram selecionados por um método determinístico de cobertura
+espacial, a partir dos 249 municípios do recorte. A regra de seleção, os
+produtos e as validações estão em
+[docs/geospatial-pipeline/04-selecao-amostra-25-municipios.md](docs/geospatial-pipeline/04-selecao-amostra-25-municipios.md).

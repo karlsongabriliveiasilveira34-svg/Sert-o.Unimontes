@@ -1,0 +1,26 @@
+ordem_selecao,codigo_ibge,municipio,uf,centroide_longitude,centroide_latitude,distancia_minima_amostra_km,metodo_selecao
+1,3141801,Minas Novas,MG,-42.435988,-17.361465,,medoide_geodesico_maximin
+2,3126208,Formoso,MG,-46.158482,-15.129700,468.485,medoide_geodesico_maximin
+3,3144003,Mutum,MG,-41.446914,-19.919233,302.898,medoide_geodesico_maximin
+4,3157104,Salto da Divisa,MG,-40.029231,-16.110473,291.594,medoide_geodesico_maximin
+5,3124302,Espinosa,MG,-42.965811,-14.859025,283.956,medoide_geodesico_maximin
+6,3109402,Buritizeiro,MG,-45.191810,-17.286053,261.045,medoide_geodesico_maximin
+7,3113800,Carmésia,MG,-43.174441,-19.060347,204.375,medoide_geodesico_maximin
+8,3144300,Nanuque,MG,-40.496944,-17.779288,192.117,medoide_geodesico_maximin
+9,3138658,Lontra,MG,-44.269620,-15.856349,178.442,medoide_geodesico_maximin
+10,3120870,Curral de Dentro,MG,-41.764812,-15.861783,170.338,medoide_geodesico_maximin
+11,3144375,Natalândia,MG,-46.474758,-16.545175,159.420,medoide_geodesico_maximin
+12,3142700,Montalvânia,MG,-44.501535,-14.473191,155.801,medoide_geodesico_maximin
+13,3135076,Jampruca,MG,-41.740318,-18.464006,142.995,medoide_geodesico_maximin
+14,3127354,Glaucilândia,MG,-43.639275,-16.903863,134.496,medoide_geodesico_maximin
+15,3136009,Joaíma,MG,-41.015379,-16.770727,124.928,medoide_geodesico_maximin
+16,3121605,Diamantina,MG,-43.610796,-17.993791,121.232,medoide_geodesico_maximin
+17,3154507,Riacho dos Machados,MG,-42.993421,-16.054479,116.887,medoide_geodesico_maximin
+18,3170529,Urucuia,MG,-45.572879,-16.028639,112.093,medoide_geodesico_maximin
+19,3163508,São José do Jacuri,MG,-42.668271,-18.242868,100.975,medoide_geodesico_maximin
+20,3167707,Sobrália,MG,-42.145858,-19.218230,94.100,medoide_geodesico_maximin
+21,3122454,Divisópolis,MG,-40.912312,-15.762883,91.867,medoide_geodesico_maximin
+22,3168606,Teófilo Otoni,MG,-41.383655,-17.714603,91.461,medoide_geodesico_maximin
+23,3126604,Francisco Dumont,MG,-44.269860,-17.469808,90.924,medoide_geodesico_maximin
+24,3119500,Coronel Murta,MG,-42.176304,-16.591284,89.983,medoide_geodesico_maximin
+25,3111150,Campo Azul,MG,-44.763321,-16.508751,89.678,medoide_geodesico_maximin
