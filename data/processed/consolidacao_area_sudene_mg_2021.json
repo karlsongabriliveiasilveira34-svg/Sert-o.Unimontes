@@ -1,0 +1,10 @@
+{
+  "fonte": "IBGE - Malha Municipal Digital 2021, Minas Gerais",
+  "municipios": 249,
+  "geometrias_municipais_invalidas": [],
+  "geometria_dissolvida_valida": true,
+  "area_publicada_ibge_soma_km2": 247049.151,
+  "area_geodesica_turf_km2": 247880.646,
+  "diferenca_relativa_percentual": 0.33657,
+  "status": "aprovado"
+}

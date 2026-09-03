@@ -36,3 +36,10 @@ Os 249 códigos foram vinculados, sem ausências, aos polígonos oficiais da Mal
 Municipal Digital 2021 do IBGE. O procedimento e a validação estrutural estão
 registrados em
 [docs/geospatial-pipeline/02-malha-municipal.md](docs/geospatial-pipeline/02-malha-municipal.md).
+
+### Etapa 3 — Consolidação da área de estudo
+
+Os limites municipais foram dissolvidos em uma geometria válida, pronta para
+interseções com bases de biomas. A decisão, os indicadores de validação e os
+limites metodológicos estão em
+[docs/geospatial-pipeline/03-consolidacao-area.md](docs/geospatial-pipeline/03-consolidacao-area.md).
