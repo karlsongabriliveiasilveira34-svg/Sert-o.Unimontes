@@ -3,5 +3,7 @@ downloads/
 
 # Dados extraídos, caches de interpretação e dependências reproduzíveis.
 data/interim/
+# Fonte oficial de 371 MB; reproduzida por URL e checksum na documentação da Etapa 7.
+data/raw/IBGE_Vegetacao_250mil_2025.zip
 scripts/__pycache__/
 node_modules/

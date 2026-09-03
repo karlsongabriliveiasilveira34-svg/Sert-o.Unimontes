@@ -69,3 +69,10 @@ Uma lista externa de 25 códigos IBGE pode ser validada e filtrada contra os
 indicadores ambientais já preparados, sem novo cruzamento espacial. O contrato
 e o procedimento estão em
 [docs/geospatial-pipeline/06-selecao-externa-25-municipios.md](docs/geospatial-pipeline/06-selecao-externa-25-municipios.md).
+
+### Etapa 7 — Ecótonos Cerrado-Caatinga
+
+Os contatos oficiais de vegetação entre Cerrado e Caatinga foram identificados
+para os 249 municípios, distinguindo contato direto e composto. A fonte,
+classificação, validações e limite de versionamento estão em
+[docs/geospatial-pipeline/07-ecotonos-cerrado-caatinga.md](docs/geospatial-pipeline/07-ecotonos-cerrado-caatinga.md).

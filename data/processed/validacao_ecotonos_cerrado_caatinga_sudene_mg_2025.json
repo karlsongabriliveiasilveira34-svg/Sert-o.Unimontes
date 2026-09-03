@@ -1,0 +1,15 @@
+{
+  "fonte": "IBGE - Vegetação 1:250.000, versão 2025",
+  "arquivo_fonte": "data\\raw\\IBGE_Vegetacao_250mil_2025.zip",
+  "arquivo_fonte_sha256": "38F05C7F9B4ABCACB9AA41C35955AD67DD0A7290A3A949D584380401B2F13FA2",
+  "campo_contato": "leg_contat",
+  "classes_incluidas": {
+    "ST": "Savana/Savana-Estépica",
+    "STN": "Savana/Savana-Estépica/Floresta Estacional"
+  },
+  "municipios_processados": 249,
+  "municipios_com_contato": 8,
+  "metodo_area": "interseção GEOS e área em projeção equivalente EPSG:6933, km2",
+  "arquivo_saida_sha256": "BB69A7C079A29BC2F2721ECB0E8B56868E68435E8D7A1E472D5BA0C68BAC13BA",
+  "status": "aprovado"
+}
