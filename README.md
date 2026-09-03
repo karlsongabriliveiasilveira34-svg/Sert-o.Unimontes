@@ -88,3 +88,9 @@ qualquer seleção externa válida de 25 municípios. O método e o produto est�
 As distâncias entre os centroides de todos os pares de uma seleção válida de 25
 municípios são calculadas pela Lei dos Cossenos esférica. Método e produtos:
 [docs/geospatial-pipeline/09-lei-dos-cossenos.md](docs/geospatial-pipeline/09-lei-dos-cossenos.md).
+
+### Etapa 10 — Relatório final da seleção
+
+Os indicadores ambientais e espaciais de uma seleção de 25 municípios são
+consolidados em relatório estruturado e legível. Procedimento e limites:
+[docs/geospatial-pipeline/10-relatorio-final-selecao.md](docs/geospatial-pipeline/10-relatorio-final-selecao.md).
