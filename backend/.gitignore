@@ -1,0 +1,19 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+.env
+
+# Tests & Cache
+.pytest_cache/
+.coverage
+htmlcov/
+*.log
+
+# Database (recriado via python manage.py migrate e load_sertao_data)
+*.sqlite3-journal
