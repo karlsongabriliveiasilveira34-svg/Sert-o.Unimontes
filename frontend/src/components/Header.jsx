@@ -1,9 +1,10 @@
 import React from 'react';
 import { Sparkles, MapPin, Radio, Layers, Home, ArrowLeft } from 'lucide-react';
+import { VeredasSymbol } from './VeredasSymbol';
 
 export function Header({ currentAgent, selectedLocation, onToggleMap, isMapOpen, onGoHome }) {
   return (
-    <header className="sticky top-0 z-40 w-full glass-panel border-b border-[#d17a42]/30 px-4 py-3 bg-[#1c1712]/90 backdrop-blur-md">
+    <header className="sticky top-0 z-40 w-full glass-panel border-b border-[#c4602c]/30 px-4 py-3 bg-[#0d0a07]/90 backdrop-blur-md">
       <div className="max-w-7xl mx-auto flex items-center justify-between">
         
         {/* Logo & Marca */}
@@ -11,26 +12,24 @@ export function Header({ currentAgent, selectedLocation, onToggleMap, isMapOpen,
           {onGoHome && (
             <button
               onClick={onGoHome}
-              className="p-2 rounded-xl bg-[#2a2018] hover:bg-[#3b2d22] border border-[#d17a42]/30 text-[#d6c5b3] hover:text-white transition shadow-sm"
+              className="p-2 rounded-xl bg-[#16110c] hover:bg-[#1f1812] border border-[#c4602c]/30 text-[#e4ceaa] hover:text-white transition shadow-sm"
               title="Voltar para a página inicial Veredas"
             >
-              <ArrowLeft className="w-4 h-4 text-[#d17a42]" />
+              <ArrowLeft className="w-4 h-4 text-[#c4602c]" />
             </button>
           )}
 
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-[#c25a30] to-[#d17a42] flex items-center justify-center shadow-lg shadow-[#c25a30]/25 text-white font-bold text-xl">
-            ⚡
-          </div>
+          <VeredasSymbol size="sm" isPulsing={true} showAura={false} />
           <div>
             <div className="flex items-center gap-2">
-              <h1 className="text-base font-bold tracking-tight text-[#f2e5d0]">
-                Veredas<span className="text-[#d17a42]">.Unimontes</span>
+              <h1 className="text-base font-bold tracking-tight text-[#f7ebd9]">
+                VEREDAS<span className="text-[#c4602c]">.AI</span>
               </h1>
-              <span className="text-[10px] uppercase font-semibold tracking-wider px-2 py-0.5 rounded-full bg-[#3b2d22] text-[#e6d5c3] border border-[#d17a42]/40 font-mono">
+              <span className="text-[10px] uppercase font-semibold tracking-wider px-2 py-0.5 rounded-full bg-[#16110c] text-[#e4ceaa] border border-[#c4602c]/40 font-mono">
                 MedIA Multiagente
               </span>
             </div>
-            <p className="text-xs text-[#a69685]">
+            <p className="text-xs text-[#a89279]">
               Inteligência que nasce do território • Cerrado & Sertão
             </p>
           </div>

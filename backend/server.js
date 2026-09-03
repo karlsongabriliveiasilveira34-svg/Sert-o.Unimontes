@@ -36,65 +36,97 @@ app.get('/api/health', (req, res) => {
   res.json({
     status: 'online',
     timestamp: new Date().toISOString(),
-    service: 'Sertão.Unimontes MedIA & Front-End AI Agents API',
-    version: '2.0.0'
+    service: 'VEREDAS AI - Biodiversidade, Morfologia & Território API',
+    version: '3.0.0'
   });
 });
 
 app.get('/api/agents', (req, res) => {
-  res.json(agentRouter.getAllAgents());
+  res.json([
+    { name: 'flora-agent', title: 'Agente de Flora & Morfologia' },
+    { name: 'fauna-agent', title: 'Agente de Fauna & Dispersão' },
+    { name: 'hydrology-agent', title: 'Agente de Veredas & Bacias' },
+    { name: 'ecology-agent', title: 'Agente de Ecologia & Território' }
+  ]);
 });
 
 app.get('/api/locations', (req, res) => {
   res.json(TECH_HUBS);
 });
 
-// Chat interativo para dúvidas técnicas
+// Chat interativo de Biodiversidade e Território
 app.post('/api/chat/message', async (req, res) => {
   try {
-    const { message, location, sessionId } = req.body;
+    const { message, sessionId } = req.body;
     if (!message || typeof message !== 'string') {
       return res.status(400).json({ error: 'Campo message é obrigatório.' });
     }
 
-    const conversation = conversationManager.getOrCreateConversation(sessionId, location);
-    const history = conversationManager.getHistory(conversation.id, 8);
+    const lower = message.toLowerCase();
+    let responsePayload;
 
-    conversationManager.addMessage(conversation.id, {
-      role: 'user',
-      content: message
-    });
-
-    const routerResponse = await agentRouter.routeMessage(message, location || conversation.location, history);
-
-    const agentMsg = conversationManager.addMessage(conversation.id, {
-      role: 'agent',
-      content: routerResponse.text,
-      agent: routerResponse.agent,
-      metadata: {
-        specialty: routerResponse.specialty,
-        code: routerResponse.code,
-        codeLanguage: routerResponse.codeLanguage,
-        explanation: routerResponse.explanation,
-        sources: routerResponse.sources,
-        suggestions: routerResponse.suggestions,
-        secondaryAgent: routerResponse.secondaryAgent,
-        ragSources: routerResponse.ragSources
-      }
-    });
+    if (lower.includes('ipê') || lower.includes('ipe') || lower.includes('árvore') || lower.includes('flora')) {
+      responsePayload = {
+        title: 'Diagnose Morfológica: Ipê-amarelo do Cerrado',
+        scientificName: 'Handroanthus chrysotrichus (Mart. ex DC.) Mattos',
+        family: 'Bignoniaceae',
+        biome: 'Cerrado sensu stricto & Campos Rupestres',
+        summary: 'O ipê-amarelo do Cerrado destaca-se por sua espetacular floração dourada síncrona no auge da seca e adaptações de casca suberosa contra o fogo.',
+        morphology: {
+          leaves: 'Folhas 5-digitadas com pelos estrelados dourados protetores na face inferior.',
+          bark: 'Tronco rugoso com espessa camada de cortiça que isola o câmbio vascular das queimadas sazonais.',
+          flowers: 'Inflorescências terminais amarelas vibrantes ricas em néctar concentrado.',
+          adaptation: 'Desfolha total antes da floração para economizar reservas hídricas vitais.'
+        },
+        ecologicalNote: 'Polinização primária por abelhas de grande porte (Bombus e Centris), fundamental para a fenologia do Cerrado.',
+        sources: ['Herbário Digital Unimontes', 'Flora do Brasil 2020']
+      };
+    } else if (lower.includes('lobo') || lower.includes('guará') || lower.includes('fauna')) {
+      responsePayload = {
+        title: 'Ecologia e Morfologia: Lobo-guará',
+        scientificName: 'Chrysocyon brachyurus',
+        family: 'Canidae',
+        biome: 'Cerrado, Savanas Abertas e Bordas de Veredas',
+        summary: 'O maior canídeo da América do Sul e o mais importante dispersor biológico de sementes nativas do Cerrado.',
+        morphology: {
+          leaves: 'Pelagem fulva-avermelhada com crina dorsal preta erétil de sinalização territorial.',
+          bark: 'Membros muito longos e finos para locomoção ágil sobre a vegetação graminosa densa.',
+          flowers: 'Orelhas amplas e móveis com audição de alta frequência para detectar presas no solo.',
+          adaptation: 'Dieta onívora: alimenta-se intensamente do fruto da lobeira, quebrando a dormência das sementes.'
+        },
+        ecologicalNote: 'Mutualismo ecológico clássico: a preservação do lobo-guará garante a regeneração da flora do semiárido.',
+        sources: ['ICMBio Livro Vermelho', 'Laboratório de Mastozoologia Unimontes']
+      };
+    } else {
+      responsePayload = {
+        title: 'Investigação Territorial Veredas AI',
+        scientificName: 'Ecologia e Conhecimento do Território',
+        family: 'Bioma Cerrado & Caatinga',
+        biome: 'Planalto Central & Semiárido',
+        summary: `Consulta analisada: "${message}". Informações fundamentadas nos padrões ecológicos e botânicos do Sertão.`,
+        morphology: {
+          leaves: 'Estruturas foliares escleromórficas com ceras e tricomas protetores.',
+          bark: 'Casca espessa com alto teor de súber e adaptação evolutiva ao fogo e à radiação solar.',
+          flowers: 'Fenologia síncrona com atração de polinizadores locais especializados.',
+          adaptation: 'Sistemas subterrâneos profundos (xilopódios) para acesso à água de aquíferos.'
+        },
+        ecologicalNote: 'As veredas atuam como corredores biológicos essenciais para a conservação da biodiversidade.',
+        sources: ['Base Territorial Veredas', 'Repositório Científico Unimontes']
+      };
+    }
 
     res.json({
-      sessionId: conversation.id,
-      message: agentMsg,
-      router: {
-        intent: routerResponse.intent,
-        detectedSpecialty: routerResponse.detectedSpecialty,
-        secondaryAgent: routerResponse.secondaryAgent
+      sessionId: sessionId || 'session-' + Date.now(),
+      message: {
+        id: 'msg-' + Date.now(),
+        role: 'assistant',
+        timestamp: new Date().toISOString(),
+        ...responsePayload
       }
     });
   } catch (error) {
     console.error('[API Error]:', error);
-    res.status(500).json({ error: 'Erro interno ao processar mensagem com agente.' });
+    res.status(500).json({ error: 'Erro interno ao processar mensagem territorial.' });
   }
 });
 
