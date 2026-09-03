@@ -19,6 +19,19 @@ definida pela Lei Complementar nº 185/2021: 249 municípios. A amostra final
 conterá 25 municípios (10,04% do universo) e será selecionada em etapas
 auditáveis antes do cálculo das proporções de Cerrado e Caatinga.
 
+### Preparacao do ambiente
+
+Em uma maquina Windows, a preparacao reproduzivel das dependencias e da fonte
+externa de Vegetacao IBGE pode ser feita com um unico comando:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/setup_pipeline.ps1
+```
+
+O procedimento, os efeitos do comando, requisitos sem permissao administrativa
+e a politica para Git LFS estao em
+[docs/geospatial-pipeline/00-preparacao-do-ambiente.md](docs/geospatial-pipeline/00-preparacao-do-ambiente.md).
+
 ### Etapa 1 — Recorte SUDENE-MG
 
 A delimitação do universo municipal foi concluída e validada com 249 códigos
