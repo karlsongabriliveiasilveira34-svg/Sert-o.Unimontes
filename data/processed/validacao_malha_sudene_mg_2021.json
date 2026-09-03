@@ -1,0 +1,11 @@
+{
+  "fonte": "IBGE - Malha Municipal Digital 2021, Minas Gerais",
+  "crs_wkt": "GEOGCS[\"GCS_SIRGAS_2000\",DATUM[\"D_SIRGAS_2000\",SPHEROID[\"GRS_1980\",6378137.0,298.257222101]],PRIMEM[\"Greenwich\",0.0],UNIT[\"Degree\",0.0174532925199433]]",
+  "municipios_na_malha_mg": 853,
+  "municipios_sudene_mg": 249,
+  "municipios_correspondentes": 249,
+  "codigos_sudene_sem_malha": [],
+  "codigos_malha_fora_do_recorte_sudene": 604,
+  "geometrias_invalidas_no_recorte": [],
+  "status": "aprovado"
+}

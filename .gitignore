@@ -1,2 +1,6 @@
 # Instaladores e logs locais de ferramentas; não são artefatos do projeto.
 downloads/
+
+# Dados extraídos e caches de interpretação.
+data/interim/
+scripts/__pycache__/

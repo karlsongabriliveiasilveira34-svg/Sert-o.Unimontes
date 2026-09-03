@@ -29,3 +29,10 @@ checksums e premissas está em
 Os dados processados estão em
 `data/processed/sudene_mg_municipios_2021.csv`; o script de reprodução está em
 `scripts/prepare_sudene_mg.py`.
+
+### Etapa 2 — Vinculação à malha municipal
+
+Os 249 códigos foram vinculados, sem ausências, aos polígonos oficiais da Malha
+Municipal Digital 2021 do IBGE. O procedimento e a validação estrutural estão
+registrados em
+[docs/geospatial-pipeline/02-malha-municipal.md](docs/geospatial-pipeline/02-malha-municipal.md).
