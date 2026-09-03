@@ -1,0 +1,49 @@
+services:
+  db:
+    image: postgis/postgis:16-3.4
+    container_name: sertao_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: sertao_unimontes
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgrespassword
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: sertao_redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+
+  backend:
+    build: .
+    container_name: sertao_backend
+    restart: unless-stopped
+    command: >
+      sh -c "python manage.py migrate &&
+             python manage.py load_sertao_data &&
+             python manage.py runserver 0.0.0.0:8000"
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    environment:
+      - DEBUG=True
+      - SECRET_KEY=sertao-unimontes-django-insecure-secret-key-2026
+      - DATABASE_URL=postgres://postgres:postgrespassword@db:5432/sertao_unimontes
+      - REDIS_URL=redis://redis:6379/0
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  postgres_data:

@@ -1,6 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { VeredasSymbol } from './VeredasSymbol';
 import { VeredasMultimodalForm } from './VeredasMultimodalForm';
+import { ErosionSegmentationViewer } from './ErosionSegmentationViewer';
+import { checkHealth, sendMessage, analyzeDegradation } from '../services/api';
 import { 
   ArrowLeft, 
   Mic, 
@@ -18,7 +20,11 @@ import {
   Compass,
   Sliders,
   Activity,
-  Satellite
+  Satellite,
+  RefreshCw,
+  AlertTriangle,
+  Radio,
+  Camera
 } from 'lucide-react';
 
 export function VeredasImmersiveChat({ onGoHome }) {
@@ -28,9 +34,30 @@ export function VeredasImmersiveChat({ onGoHome }) {
   const [isRecording, setIsRecording] = useState(false);
   const [attachedFiles, setAttachedFiles] = useState([]);
   const [showMultimodalForm, setShowMultimodalForm] = useState(false);
+  const [backendStatus, setBackendStatus] = useState('checking'); // 'online' | 'offline' | 'checking'
+  const [errorMessage, setErrorMessage] = useState(null);
   const messagesEndRef = useRef(null);
   const textareaRef = useRef(null);
   const fileInputRef = useRef(null);
+
+  // Verificação de conectividade com a API Django
+  const verifyBackend = async () => {
+    setBackendStatus('checking');
+    try {
+      const health = await checkHealth();
+      if (health && health.status === 'online') {
+        setBackendStatus('online');
+      } else {
+        setBackendStatus('offline');
+      }
+    } catch {
+      setBackendStatus('offline');
+    }
+  };
+
+  useEffect(() => {
+    verifyBackend();
+  }, []);
 
   // Rola até o final das mensagens
   useEffect(() => {
@@ -45,10 +72,12 @@ export function VeredasImmersiveChat({ onGoHome }) {
     }
   }, [inputText]);
 
-  // Envio de mensagem
-  const handleSendMessage = async (textToSend) => {
+  // Envio de mensagem com suporte a diagnósticos de degradação e segmentação Erosion-SAM
+  const handleSendMessage = async (textToSend, extraDegradationData) => {
     const text = (textToSend || inputText).trim();
     if (!text || isThinking) return;
+
+    setErrorMessage(null);
 
     const userMessage = {
       id: 'user-' + Date.now(),
@@ -64,29 +93,65 @@ export function VeredasImmersiveChat({ onGoHome }) {
     setIsThinking(true);
 
     try {
-      // Tenta consultar a API de chat do backend
-      const response = await fetch('/api/chat/message', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          message: text,
-          territory: 'Cerrado & Sertão Mineiro',
-          sessionId: 'veredas-bio-session'
-        })
+      const lower = text.toLowerCase();
+      let degradationResult = extraDegradationData || null;
+
+      // Se for consulta de degradação/erosão e não tiver sido enviada pelo form, consulta a API do Erosion-SAM
+      if (!degradationResult && (
+        lower.includes('erosão') || lower.includes('erosao') || 
+        lower.includes('degradação') || lower.includes('degradacao') || 
+        lower.includes('voçoroca') || lower.includes('vocoroca') || 
+        lower.includes('solo exposto') || lower.includes('pastagem') || 
+        lower.includes('multimodal') || lower.includes('ravina')
+      )) {
+        try {
+          degradationResult = await analyzeDegradation({
+            scenario_id: (lower.includes('voçoroca') || lower.includes('vocoroca')) ? 'vocoroca-norte-mg' : 'pastagem-degradada',
+            ndvi: 0.28,
+            slope_value: 7.5
+          });
+        } catch (degErr) {
+          console.warn('Fallback para segmentação local:', degErr);
+        }
+      }
+
+      // Consulta a API de chat do Django
+      const data = await sendMessage({
+        message: text,
+        location: { territory: 'Cerrado & Sertão Mineiro', hub: 'Unimontes' },
+        sessionId: 'veredas-bio-session'
       });
 
-      if (response.ok) {
-        const data = await response.json();
-        if (data.message && data.message.sections) {
-          setMessages(prev => [...prev, data.message]);
-        } else {
-          setMessages(prev => [...prev, generateTerritorialResponse(text)]);
-        }
+      if (data && data.message) {
+        setBackendStatus('online');
+        const assistantMsg = {
+          id: data.message.id || 'bio-' + Date.now(),
+          role: 'assistant',
+          timestamp: data.message.timestamp || new Date().toISOString(),
+          ...data.message,
+          degradationAnalysis: degradationResult || data.message.degradationAnalysis
+        };
+        setMessages(prev => [...prev, assistantMsg]);
       } else {
-        setMessages(prev => [...prev, generateTerritorialResponse(text)]);
+        const fallbackResp = generateTerritorialResponse(text);
+        if (degradationResult) {
+          fallbackResp.degradationAnalysis = degradationResult;
+        }
+        setMessages(prev => [...prev, fallbackResp]);
       }
     } catch (err) {
-      setMessages(prev => [...prev, generateTerritorialResponse(text)]);
+      console.warn('Erro ao conectar ao Django REST, ativando fallback editorial:', err);
+      if (err.message && err.message.includes('413')) {
+        setErrorMessage('Aviso: O payload enviado excedeu o limite máximo de 8 MB permitido pelo servidor.');
+      } else if (err.message && err.message.includes('429')) {
+        setErrorMessage('Aviso: Limite de taxa de requisições por minuto excedido (Rate limit). Aguarde um instante.');
+      }
+      setBackendStatus('offline');
+      const fallbackResp = generateTerritorialResponse(text);
+      if (extraDegradationData) {
+        fallbackResp.degradationAnalysis = extraDegradationData;
+      }
+      setMessages(prev => [...prev, fallbackResp]);
     } finally {
       setIsThinking(false);
     }
@@ -95,6 +160,98 @@ export function VeredasImmersiveChat({ onGoHome }) {
   // Motor de respostas editoriais estruturadas sobre Biodiversidade e Morfologia
   const generateTerritorialResponse = (query) => {
     const lower = query.toLowerCase();
+
+    // 0. DEGRADAÇÃO DA TERRA, EROSÃO, VOÇOROCA E FUSÃO MULTIMODAL (Erosion-SAM)
+    if (lower.includes('erosão') || lower.includes('erosao') || lower.includes('degradação') || 
+        lower.includes('degradacao') || lower.includes('voçoroca') || lower.includes('vocoroca') || 
+        lower.includes('solo exposto') || lower.includes('pastagem') || lower.includes('multimodal') || 
+        lower.includes('ravina') || lower.includes('sam')) {
+      const isVocoroca = lower.includes('voçoroca') || lower.includes('vocoroca') || lower.includes('ravina') || lower.includes('alta');
+      return {
+        id: 'degradacao-' + Date.now(),
+        role: 'assistant',
+        title: isVocoroca 
+          ? 'Diagnóstico Espacial: Voçorocamento Ativo e Solo Exposto'
+          : 'Diagnóstico Espacial: Degradação de Pastagem e Compactação de Solo',
+        scientificName: 'Segmentação Espacial e Análise de Risco de Degradação (Erosion-SAM)',
+        family: 'Geomorfologia e Hidrologia Territorial',
+        biome: 'Cerrado, Zonas de Recarga e Ecotono Semiárido',
+        summary: isVocoroca
+          ? 'Identificado processo erosivo hídrico severo com foco de voçoroca em evolução (8.7% de área degradada crítica). A perda de horizonte orgânico superficial foi agravada pelo escoamento superficial desordenado em vertente com declividade superior a 6%.'
+          : 'Identificado processo de degradação moderada por perda de cobertura vegetal e compactação por pisoteio extensivo (23% de solo exposto e 18% de pastagem degradada), com risco de surgimento de sulcos lineares.',
+        morphology: {
+          leaves: 'Índice de Vegetação (NDVI = 0.28): biomassa vegetal severamente suprimida ou senescente.',
+          bark: 'Crosta superficial de solo selada e compactada, impedindo a infiltração de água e acelerando o fluxo torrencial de enxurrada.',
+          flowers: 'Foco erosivo ativo delimitado com 8.7% de ocupação territorial, gerando desbarrancamento e transporte de sedimentos.',
+          habitat: 'Vertente suave-ondulada do Norte de Minas em Latossolo Vermelho-Amarelo com horizonte arenoso suscetível à desagregação.',
+          adaptation: 'Prescrição imediata de manejo: contenção física nos vértices com paliçadas de madeira e plantio em curva de nível para retenção hídrica.'
+        },
+        ecologicalNote: 'A intervenção precoce no foco erosivo protege os cursos d\'água da bacia hidrográfica contra o assoreamento e preserva os aquíferos locais.',
+        sources: ['Erosion-SAM (Segment Anything Model adaptado para Solos)', 'Sensoriamento Remoto Sentinel-2', 'Laboratório de Geoprocessamento Unimontes'],
+        degradationAnalysis: {
+          status: 'success',
+          modelo_segmentacao: 'Erosion-SAM v1.2 (ViT-H Backbone + Sentinel-2 Fusion)',
+          localizacao: 'Norte de Minas (Região SUDENE-MG)',
+          cenario_id: isVocoroca ? 'vocoroca-norte-mg' : 'pastagem-degradada',
+          composicao_paisagem_pct: isVocoroca ? {
+            vegetacao_preservada: 44.5,
+            solo_exposto: 28.3,
+            pastagem_degradada: 18.5,
+            erosao_ativa: 8.7
+          } : {
+            vegetacao_preservada: 54.0,
+            solo_exposto: 23.0,
+            pastagem_degradada: 18.0,
+            erosao_ativa: 5.0
+          },
+          severidade: isVocoroca ? 'Alta' : 'Moderada',
+          confianca_modelo_pct: 88.5,
+          tipo_erosao: isVocoroca 
+            ? 'Erosão Hídrica Linear (Ravinas e Voçoroca Inicial)' 
+            : 'Erosão Laminar e Compactação por Pisoteio',
+          indicios_degradacao: [
+            'Solo exposto com perda da camada orgânica superficial',
+            'Erosão linear ativa em processo de expansão',
+            'Formação de canais de drenagem pluvial não controlados',
+            'Compactação do horizonte subsuperficial'
+          ],
+          variaveis_multimodais: {
+            ndvi_sentinel2: 0.28,
+            declividade_mde: 7.5,
+            classificacao_relevo: 'Suave-Ondulado a Ondulado',
+            bioma_referencia: 'Cerrado & Semiárido Mineiro'
+          },
+          mascara_segmentacao: {
+            largura_referencia: 100,
+            altura_referencia: 100,
+            poligonos: isVocoroca ? [
+              { id: "mask-erosao-1", classe: "erosao", label: "Voçoroca / Foco Erosivo Ativo", cor: "#ef4444", area_pct: 8.7, pontos: [[35, 45], [42, 42], [58, 65], [62, 85], [50, 92], [41, 78], [33, 58]] },
+              { id: "mask-solo-1", classe: "solo_exposto", label: "Solo Exposto e Compactado", cor: "#d97706", area_pct: 28.3, pontos: [[20, 30], [35, 40], [45, 60], [30, 80], [15, 65], [12, 45]] },
+              { id: "mask-pasto-1", classe: "pastagem", label: "Pastagem Degradada / Braquiária", cor: "#eab308", area_pct: 18.5, pontos: [[55, 20], [80, 25], [88, 55], [70, 60], [58, 40]] },
+              { id: "mask-veg-1", classe: "vegetacao", label: "Cerrado / Vegetação Arbustiva Preservada", cor: "#22c55e", area_pct: 44.5, pontos: [[5, 5], [95, 5], [95, 25], [60, 20], [10, 25]] }
+            ] : [
+              { id: "mask-erosao-2", classe: "erosao", label: "Erosão Laminar Concentrada", cor: "#ef4444", area_pct: 5.0, pontos: [[45, 50], [55, 48], [60, 68], [48, 72]] },
+              { id: "mask-solo-2", classe: "solo_exposto", label: "Solo Exposto / Selado", cor: "#d97706", area_pct: 23.0, pontos: [[25, 35], [45, 45], [40, 75], [20, 65]] },
+              { id: "mask-pasto-2", classe: "pastagem", label: "Pastagem Rala / Degradação", cor: "#eab308", area_pct: 18.0, pontos: [[60, 30], [85, 35], [80, 70], [55, 60]] },
+              { id: "mask-veg-2", classe: "vegetacao", label: "Vegetação Preservada", cor: "#22c55e", area_pct: 54.0, pontos: [[10, 10], [90, 10], [90, 30], [10, 30]] }
+            ]
+          },
+          plano_manejo: {
+            acoes_mecanicas: [
+              "Construção de paliçadas de madeira e biomassa nos vértices da voçoroca",
+              "Bacias de acumulação de enxurrada (barraginhas) no topo da vertente",
+              "Curvas de nível em declive zero para infiltração forçada de água pluvial"
+            ],
+            acoes_biologicas: [
+              "Semeadura de leguminosas (Crotalária + Feijão-de-porco) para fixação de nitrogênio",
+              "Plantio adensado de mudas do Cerrado com raízes pivotantes (Pequi, Baru, Angico)",
+              "Cobertura morta (mulching de palhada seca) para frear a evaporação"
+            ],
+            cronograma_estimado: "12 a 18 meses para estabilização hidrológica da voçoroca"
+          }
+        }
+      };
+    }
 
     // 1. IPÊ-AMARELO / FLORA DO CERRADO
     if (lower.includes('ipê') || lower.includes('ipe') || lower.includes('amarelo') || lower.includes('árvore')) {
@@ -233,9 +390,18 @@ export function VeredasImmersiveChat({ onGoHome }) {
     }
   };
 
-  // Upload de imagem/arquivo
+  // Upload de imagem/arquivo com validação de payload máximo (Lucas: 8 MB)
   const handleFileChange = (e) => {
     const files = Array.from(e.target.files || []);
+    const MAX_FILE_SIZE = 8 * 1024 * 1024; // 8 MB
+
+    const oversized = files.filter(f => f.size > MAX_FILE_SIZE);
+    if (oversized.length > 0) {
+      setErrorMessage(`O arquivo "${oversized[0].name}" excede o limite máximo de 8 MB permitido pela segurança do servidor (HTTP 413).`);
+      return;
+    }
+
+    setErrorMessage(null);
     if (files.length > 0) {
       setAttachedFiles(prev => [...prev, ...files.map(f => f.name)]);
     }
@@ -255,7 +421,7 @@ export function VeredasImmersiveChat({ onGoHome }) {
   return (
     <div className="min-h-screen bg-[#0d0a07] text-[#e4ceaa] flex flex-col justify-between selection:bg-[#c4602c]/30 selection:text-[#f7ebd9] relative font-sans">
       
-      {/* 1. Header Minimalista */}
+      {/* 1. Header Minimalista com Status da API Django */}
       <header className="sticky top-0 z-40 bg-[#0d0a07]/90 backdrop-blur-md border-b border-[#2d2218] px-6 sm:px-10 py-4">
         <div className="w-full flex items-center justify-between">
           
@@ -271,6 +437,40 @@ export function VeredasImmersiveChat({ onGoHome }) {
           </button>
 
           <div className="flex items-center gap-3">
+            {/* Indicador de Status do Backend Django */}
+            <div 
+              className={`flex items-center gap-2 text-[11px] font-mono px-3 py-1.5 rounded-full border transition-all ${
+                backendStatus === 'online'
+                  ? 'bg-[#152414] border-[#386b30] text-[#78c26d]'
+                  : backendStatus === 'checking'
+                  ? 'bg-[#1e1912] border-[#5e4b2d] text-[#d4ad64]'
+                  : 'bg-[#241310] border-[#6b2c24] text-[#c96c61]'
+              }`}
+              title={
+                backendStatus === 'online'
+                  ? 'Backend Django REST Framework conectado em http://127.0.0.1:8000'
+                  : 'Backend Django offline. Respostas operando com base editorial local.'
+              }
+            >
+              <span className={`w-2 h-2 rounded-full ${
+                backendStatus === 'online' 
+                  ? 'bg-[#4ade80] animate-pulse' 
+                  : backendStatus === 'checking'
+                  ? 'bg-[#fbbf24] animate-ping'
+                  : 'bg-[#ef4444]'
+              }`} />
+              <span className="hidden sm:inline">
+                {backendStatus === 'online' ? 'DJANGO ONLINE' : backendStatus === 'checking' ? 'CONECTANDO...' : 'MODO LOCAL'}
+              </span>
+              <button 
+                onClick={verifyBackend} 
+                className="hover:rotate-180 transition-transform duration-500 cursor-pointer ml-0.5 text-inherit"
+                title="Checar conexão com a API Django"
+              >
+                <RefreshCw className="w-3 h-3" />
+              </button>
+            </div>
+
             <button
               onClick={() => setShowMultimodalForm(prev => !prev)}
               className={`flex items-center gap-2 text-xs font-mono px-3 py-1.5 rounded-lg border transition-all cursor-pointer ${
@@ -302,12 +502,29 @@ export function VeredasImmersiveChat({ onGoHome }) {
       {/* 2. Canvas Centrado (Estilo Editorial e Cinematográfico, Sem Sidebar) */}
       <main className="flex-1 w-full max-w-4xl mx-auto px-6 sm:px-8 py-8 flex flex-col justify-start">
         
+        {/* Banner de Erro / Limite de Segurança */}
+        {errorMessage && (
+          <div className="mb-6 p-4 rounded-xl bg-[#241310] border border-[#6b2c24] text-[#e4ceaa] text-xs font-mono flex items-center justify-between animate-fade-in shadow-xl">
+            <div className="flex items-center gap-3">
+              <AlertTriangle className="w-4 h-4 text-[#ef4444] flex-shrink-0" />
+              <span>{errorMessage}</span>
+            </div>
+            <button 
+              onClick={() => setErrorMessage(null)} 
+              className="cursor-pointer text-[#a89279] hover:text-[#f7ebd9] p-1"
+              title="Fechar alerta"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+        )}
+
         {/* Painel do Formulário Multimodal quando ativo */}
         {showMultimodalForm && (
           <VeredasMultimodalForm 
-            onSubmitDiagnosis={(query) => {
+            onSubmitDiagnosis={(query, formData, degradationData) => {
               setShowMultimodalForm(false);
-              handleSendMessage(query);
+              handleSendMessage(query, degradationData);
             }}
             onClose={() => setShowMultimodalForm(false)}
           />
@@ -399,6 +616,13 @@ export function VeredasImmersiveChat({ onGoHome }) {
                           </span>
                         )}
                       </div>
+
+                      {/* Visualizador Espacial Interativo Erosion-SAM (Degradação & Erosão do Solo) */}
+                      {msg.degradationAnalysis && (
+                        <div className="pt-2">
+                          <ErosionSegmentationViewer analysisData={msg.degradationAnalysis} />
+                        </div>
+                      )}
 
                       {/* Síntese Geral */}
                       {msg.summary && (

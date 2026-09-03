@@ -4,10 +4,10 @@
   "private": true,
   "description": "Sistema de Agentes Especialistas em Front-End com IA, RAG e Seleção Geográfica - Sertão.Unimontes",
   "scripts": {
-    "install:all": "npm install --prefix backend && npm install --prefix frontend",
-    "dev:backend": "npm run dev --prefix backend",
+    "install:frontend": "npm install --prefix frontend",
     "dev:frontend": "npm run dev --prefix frontend",
-    "build:frontend": "npm run build --prefix frontend",
-    "start": "node backend/server.js"
+    "dev:backend": "python backend/manage.py runserver",
+    "dev:backend:node": "node backend-node/server.js",
+    "build:frontend": "npm run build --prefix frontend"
   }
 }

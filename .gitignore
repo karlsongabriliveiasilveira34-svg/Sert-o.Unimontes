@@ -22,3 +22,23 @@ yarn-error.log*
 .idea/
 .DS_Store
 Thumbs.db
+
+# Python & Django
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+.pytest_cache/
+.coverage
+htmlcov/
+*.sqlite3-journal
+
+# ML / ONNX Models
+*.onnx
+models/*.onnx
+backend/models/*.onnx
+
