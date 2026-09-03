@@ -1,6 +1,6 @@
 # Decisão de arquitetura — Amostra parametrizável de 25 municípios
 
-**Status:** aprovada para implementação antes da Etapa 5
+**Status:** implementada na Etapa 6
 **Responsável:** Túlio
 **Data:** 2026-09-03
 
@@ -16,8 +16,7 @@ referência**. Ela continua útil para demonstrações, testes de regressão e u
 quando não houver uma lista fornecida pelo usuário. Não deve ser apagada nem
 regenerada por uma seleção de usuário.
 
-Antes da Etapa 5, a pipeline será adaptada para aceitar uma seleção externa.
-A Etapa 5, por sua vez, calculará indicadores ambientais para os 249
+A Etapa 5 calculou indicadores ambientais para os 249
 municípios, e não somente para a amostra de referência. Assim, qualquer seleção
 válida de 25 municípios poderá apenas filtrar resultados já preparados, sem
 repetir interseções espaciais custosas.
@@ -35,11 +34,11 @@ repetir interseções espaciais custosas.
 - Os arquivos já publicados da Etapa 4, preservados como evidência reproduzível
   da seleção de referência.
 
-## O que deve mudar nesta branch
+## Implementação realizada
 
-1. Refatorar `scripts/select_sample_25.py` para separar dois modos explícitos:
-   `referencia-espacial` para a seleção automática atual e `lista-externa` para
-   uma lista fornecida pelo usuário.
+1. A seleção automática de referência permaneceu em `scripts/select_sample_25.py`.
+   Um validador independente, `scripts/validate_selection_25.py`, recebe a lista
+   externa sem alterar a referência.
 2. Definir um contrato de entrada mínimo em CSV, com uma coluna
    `codigo_ibge` e exatamente 25 linhas de dados. A ordem recebida não deve
    alterar a identidade da seleção; os códigos devem ser normalizados e
@@ -47,15 +46,14 @@ repetir interseções espaciais custosas.
 3. No modo `lista-externa`, interromper a execução para quantidade diferente de
    25, código duplicado, código inexistente, código fora da SUDENE-MG ou coluna
    obrigatória ausente. O relatório deve listar erros de forma acionável.
-4. Gravar cada seleção em um diretório identificado por hash do conjunto de
+4. Cada seleção é gravada em um diretório identificado por hash do conjunto de
    códigos, com manifesto contendo fonte, data, versão territorial, os 25
    códigos normalizados e hash do arquivo de entrada. Uma seleção não deve
    sobrescrever a outra nem os produtos de referência.
 5. Versionar somente o exemplo de contrato e os perfis de referência. Seleções
    concretas de usuários e produtos temporários devem ficar fora do Git, pois
    são dados de execução e não a base canônica do projeto.
-6. Atualizar a documentação da Etapa 4 e o README com os dois modos de seleção,
-   comandos de reprodução e regras de reversão.
+6. A documentação e o README foram atualizados na Etapa 6.
 
 ## Diretriz para a Etapa 5
 
@@ -74,17 +72,15 @@ tabela de 249 municípios. A análise de distâncias deverá receber a mesma
 seleção normalizada, registrar o identificador dela e nunca assumir a lista de
 referência silenciosamente.
 
-## Sequência de implementação
+## Sequência realizada
 
-1. Implementar e validar o contrato `lista-externa` e o manifesto de seleção.
-2. Preservar e renomear conceitualmente a saída atual como perfil de referência
-   na documentação, sem quebrar seus caminhos já publicados.
-3. Adicionar regras ao `.gitignore` para diretórios de seleções executadas pelo
-   usuário, mantendo exemplos versionados.
-4. Só então iniciar a Etapa 5 com cobertura dos 249 municípios.
+1. A Etapa 5 foi concluída para os 249 municípios.
+2. A Etapa 6 implementou e validou o contrato `lista-externa` e o manifesto.
+3. A saída atual foi preservada como perfil de referência.
+4. Os produtos de execução permanecem em `data/interim/`, já ignorado pelo Git.
 
 ## Critério de aceite
 
-Prosseguir para a Etapa 5 somente quando uma lista válida de 25 códigos puder
-ser validada sem alterar os artefatos de referência e quando a especificação da
-Etapa 5 assumir explicitamente os 249 municípios como universo de cálculo.
+Aceitar a implementação quando uma lista válida de 25 códigos gerar seus
+produtos isolados sem alterar os artefatos de referência ou a tabela ambiental
+dos 249 municípios.

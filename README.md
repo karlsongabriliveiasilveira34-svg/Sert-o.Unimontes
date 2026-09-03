@@ -62,3 +62,10 @@ As áreas e percentuais de Cerrado e Caatinga foram calculados para os 249
 municípios do universo, permitindo atender seleções futuras sem repetir o
 cruzamento espacial. Fonte, método, validações e limites estão em
 [docs/geospatial-pipeline/05-intersecao-biomas-ibge.md](docs/geospatial-pipeline/05-intersecao-biomas-ibge.md).
+
+### Etapa 6 — Seleção externa de 25 municípios
+
+Uma lista externa de 25 códigos IBGE pode ser validada e filtrada contra os
+indicadores ambientais já preparados, sem novo cruzamento espacial. O contrato
+e o procedimento estão em
+[docs/geospatial-pipeline/06-selecao-externa-25-municipios.md](docs/geospatial-pipeline/06-selecao-externa-25-municipios.md).
