@@ -5,6 +5,7 @@ import { agentRouter } from './agents/routing.js';
 import { conversationManager } from './chat/conversation-manager.js';
 import { TECH_HUBS, getHubById, getNearestHub } from './maps/location-handler.js';
 import { vectorStore } from './rag/vector-store.js';
+import { knowledgeTreeEngine } from './rag/knowledge-tree.js';
 import {
   SAMPLE_CASES,
   runClinicalAgent,
@@ -52,6 +53,41 @@ app.get('/api/agents', (req, res) => {
 
 app.get('/api/locations', (req, res) => {
   res.json(TECH_HUBS);
+});
+
+// ==========================================
+// KNOWLEDGE TREE API (Árvore de Conhecimento)
+// ==========================================
+
+// Retorna a árvore de conhecimento completa
+app.get('/api/knowledge-tree', (req, res) => {
+  res.json(knowledgeTreeEngine.getRoot());
+});
+
+// Busca nós na árvore por termo ou tag
+app.get('/api/knowledge-tree/search', (req, res) => {
+  const query = req.query.q || '';
+  const results = knowledgeTreeEngine.searchNodes(query);
+  res.json(results);
+});
+
+// Retorna as 25 Regiões da SUDENE mapeadas na árvore
+app.get('/api/knowledge-tree/sudene-regions', (req, res) => {
+  res.json(knowledgeTreeEngine.getSudeneRegions());
+});
+
+app.get('/api/knowledge-tree/regions', (req, res) => {
+  res.json(knowledgeTreeEngine.getSudeneRegions());
+});
+
+// Retorna o nó por ID e seu contexto formatado para o RAG do José Vitor
+app.get('/api/knowledge-tree/node/:id', (req, res) => {
+  const node = knowledgeTreeEngine.findNodeById(req.params.id);
+  if (!node) {
+    return res.status(404).json({ error: 'Nó da Knowledge Tree não encontrado.' });
+  }
+  const promptContext = knowledgeTreeEngine.formatContextPrompt(req.params.id);
+  res.json({ node, promptContext });
 });
 
 // Chat interativo de Biodiversidade e Território
