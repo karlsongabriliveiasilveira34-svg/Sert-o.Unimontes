@@ -46,7 +46,12 @@ limites metodológicos estão em
 
 ### Etapa 4 — Seleção da amostra de 25 municípios
 
-Os 25 municípios foram selecionados por um método determinístico de cobertura
-espacial, a partir dos 249 municípios do recorte. A regra de seleção, os
-produtos e as validações estão em
+Os 25 municípios de referência foram selecionados por um método determinístico
+de cobertura espacial, a partir dos 249 municípios do recorte. A regra de
+seleção, os produtos e as validações estão em
 [docs/geospatial-pipeline/04-selecao-amostra-25-municipios.md](docs/geospatial-pipeline/04-selecao-amostra-25-municipios.md).
+
+A pipeline será parametrizada antes da Etapa 5 para receber qualquer seleção
+válida de 25 municípios do recorte, mantendo a amostra atual como referência.
+A decisão e o plano de adaptação estão em
+[docs/geospatial-pipeline/00-decisao-amostra-parametrizavel.md](docs/geospatial-pipeline/00-decisao-amostra-parametrizavel.md).

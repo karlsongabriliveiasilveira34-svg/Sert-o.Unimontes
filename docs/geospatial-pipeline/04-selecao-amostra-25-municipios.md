@@ -6,7 +6,7 @@
 
 ## Objetivo
 
-Definir uma amostra final, reproduzível e espacialmente distribuída de 25 municípios dentre os 249 municípios mineiros da área de atuação da SUDENE. A amostra será a unidade territorial das próximas análises de biomas, transição entre Cerrado e Caatinga e distâncias para aplicação da Lei dos Cossenos.
+Definir uma amostra de referência, reproduzível e espacialmente distribuída de 25 municípios dentre os 249 municípios mineiros da área de atuação da SUDENE. A amostra serve para demonstrações e testes de regressão das próximas análises de biomas, transição entre Cerrado e Caatinga e distâncias para aplicação da Lei dos Cossenos.
 
 Esta etapa seleciona apenas os municípios. Ela não classifica biomas, não calcula porcentagens ambientais e não infere fauna ou flora.
 
@@ -68,7 +68,8 @@ As métricas de distância e o município-semente constam no relatório JSON ger
 - A seleção não garante por si só presença de ambos os biomas em todos os municípios. Isso será testado com a base ambiental na etapa seguinte.
 - A Lei dos Cossenos ainda não é aplicada: os centroides e a amostra estável são os insumos para essa análise, que deve documentar pares, triângulos e a unidade de distância adotada.
 - Para desfazer esta etapa, basta remover seus dois produtos gerados e o script ou restaurar o commit anterior; os insumos das Etapas 1 a 3 não são alterados.
+- A seleção de referência não limita o produto a esses 25 municípios. A decisão de aceitar listas externas e o plano de adaptação antes da Etapa 5 estão em `docs/geospatial-pipeline/00-decisao-amostra-parametrizavel.md`.
 
 ## Critério de aprovação da revisão
 
-Prosseguir somente se a equipe aceitar que os 25 municípios sejam escolhidos por cobertura espacial, sem ponderação temática. Com essa aprovação, a próxima etapa poderá obter e padronizar uma fonte oficial de cobertura de biomas para interseção com os polígonos municipais selecionados.
+Prosseguir somente se a equipe aceitar que os 25 municípios sejam escolhidos por cobertura espacial, sem ponderação temática, como perfil de referência. Antes da Etapa 5, deve ser implementada a seleção parametrizável descrita em `docs/geospatial-pipeline/00-decisao-amostra-parametrizavel.md`.
