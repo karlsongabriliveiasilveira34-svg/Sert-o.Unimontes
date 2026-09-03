@@ -76,3 +76,9 @@ Os contatos oficiais de vegetação entre Cerrado e Caatinga foram identificados
 para os 249 municípios, distinguindo contato direto e composto. A fonte,
 classificação, validações e limite de versionamento estão em
 [docs/geospatial-pipeline/07-ecotonos-cerrado-caatinga.md](docs/geospatial-pipeline/07-ecotonos-cerrado-caatinga.md).
+
+### Etapa 8 — Resumo ambiental da seleção
+
+Os percentuais consolidados de Cerrado, Caatinga e ecótono são calculados para
+qualquer seleção externa válida de 25 municípios. O método e o produto estão em
+[docs/geospatial-pipeline/08-resumo-ambiental-selecao.md](docs/geospatial-pipeline/08-resumo-ambiental-selecao.md).
