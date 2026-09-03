@@ -7,7 +7,7 @@ Projeto Sertão Unimontes.
 O projeto é desenvolvido por uma equipe multidisciplinar, com as seguintes responsabilidades:
 
 - **Lucas**: Integração de APIs de Banco de Dados (dados climáticos, morfológicos e de recursos hídricos) e Cibersegurança (implementação de restrições como rate limit, payload máximo de 8MB e outras medidas de segurança).
-- **Túlio**: Análise de Dados Geográficos e Ambientais (aplicação da Lei dos Cossenos para análise da região de 25 cidades do Norte de Minas, além da determinação da porcentagem das áreas de transição entre Cerrado e Caatinga, focando na fauna e flora).
+- **Túlio**: Análise de Dados Geográficos e Ambientais (aplicação da Lei dos Cossenos para análise da região de 25 cidades do Norte de Minas e determinação das porcentagens de Cerrado, Caatinga e áreas de transição).
 - **José Vitor**: Inteligência Artificial e Processamento de Dados (Implementação de RAG, indexação estruturada com árvore de vetores e arquitetura de multiagentes).
 - **Karlson**: Desenvolvimento Frontend (Criação de interface web e integrações utilizando Node.js).
 - **Álvaro**: Desenvolvimento Backend (Estruturação e lógica de negócios utilizando o framework Django).
@@ -82,3 +82,9 @@ classificação, validações e limite de versionamento estão em
 Os percentuais consolidados de Cerrado, Caatinga e ecótono são calculados para
 qualquer seleção externa válida de 25 municípios. O método e o produto estão em
 [docs/geospatial-pipeline/08-resumo-ambiental-selecao.md](docs/geospatial-pipeline/08-resumo-ambiental-selecao.md).
+
+### Etapa 9 — Distâncias pela Lei dos Cossenos
+
+As distâncias entre os centroides de todos os pares de uma seleção válida de 25
+municípios são calculadas pela Lei dos Cossenos esférica. Método e produtos:
+[docs/geospatial-pipeline/09-lei-dos-cossenos.md](docs/geospatial-pipeline/09-lei-dos-cossenos.md).
